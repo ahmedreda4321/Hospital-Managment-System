@@ -1,0 +1,97 @@
+{% extends 'home/homebase.html' %}
+{% from 'includes/form_helper.html' import render_form %}
+{%block headscript%}
+<script>
+    $(function () {
+        $('#navmakeapt').addClass('active');
+    });
+</script>
+
+<!-- Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#speciality_id').change(function (e) {
+            speciality = $(this).val();
+            $.get("get_doctors_by_spec", { 'spec': speciality },
+                function (data, textStatus, jqXHR) {
+                    var doctorsData = JSON.parse(data)
+                    $('#doctor_id').empty();
+                    $.each(doctorsData, function (indexInArray, valueOfElement) {
+                        $('#doctor_id').append('<option value="' + valueOfElement.value + '">' + valueOfElement.text + '</option>');
+                    });
+                },
+            );
+
+        });
+        $('#symptoms').select2({
+            theme: "bootstrap-5",
+            placeholder: 'Select Symptoms',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            closeOnSelect: false,
+            allowClear: true,
+        });
+        $('#symptoms').on('change', function () {
+            // Get the selected value(s)
+            var selectedValues = $(this).val();
+
+            // Perform AJAX POST request to the server
+            $.ajax({
+                type: 'POST',
+                url: '/predict_patient', // Replace with your actual API endpoint
+                data: { 'selectedValues': selectedValues },
+                success: function (response) {
+                    if (response.result) {
+                        $('#responsecontainer').show();
+                        $('#response').text(response.result);
+                    }
+                    else {
+                        $('#responsecontainer').hide();
+                        console.error('Error in POST request:', error);
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+
+        });
+
+    });
+
+</script>
+{%endblock headscript%}
+
+{% block content %}
+<div class="container-fluid bg-body-secondary min-vh-100 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-10 col-md-6 p-2 bg-body-tertiary shadow rounded-3">
+            <div class="h1 text-center text-white bg-success bg-gradient rounded-pill"> Appointment Form</div>
+            {{form.symptoms.label(class='form-label')}}
+            {{form.symptoms(class='form-select')}}
+
+
+            <div class="h5 my-3" id="responsecontainer" style="display: none;">
+                Your symptoms indicate checking up with a <span id="response" class="text-primary"></span>
+            </div>
+            {{choosespecialization.specialization.label(class='form-label')}}
+            {{choosespecialization.specialization(class='form-select')}}
+            <form action="/appointments" method="post">
+                {{render_form(appointform)}}
+            </form>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,154 @@
+{% extends "home/homebase.html" %}
+{% block headscript %}
+<script>
+  $(function () {
+    $('#navreg').addClass('active');
+
+    $('#role_id').change(function (e) {
+      if ($(this).val() === '2') {
+        $('#specialization').show();
+      }
+      else {
+        $('#specialization').hide();
+      }
+    });
+  });
+</script>
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid min-vh-100 pt-5"
+  style=" background-image: url( {{ url_for('static',filename='images/loginbackground.jpg') }} );  background-size: cover ; background-position: center;">
+  <div class="row justify-content-center">
+    <div class="col-lg-4 col-sm-12 ">
+
+
+      <div class="card card-plain shadow-lg border-0">
+        <div class="card-header  bg-primary bg-gradient ">
+          <div class=" h4  text-center text-white ">
+            Registration
+          </div>
+
+        </div>
+        <div class="mt-2 text-danger text-center">
+          {% if msg %}
+          <div class="alert alert-danger alert-dismissible fade rounded-pill bg-gradient show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            {{ msg }}
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-body mt-1  px-3  ">
+          <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+              <legend class="border-bottom mb-4">Sign up </legend>
+
+              <div class="form-group">
+                {{ form.username.label(class="form-control-label").replace('_','').title() +
+                ':' }}
+
+                {% if form.username.errors %}
+                {{ form.username(class="form-control form-control is-invalid") }}
+                <div class="invalid-feedback">
+                  {% for error in form.username.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %}
+                {{ form.username(class="form-control form-control") }}
+                {% endif %}
+              </div>
+              <div class="form-group">
+                {{ form.email.label(class="form-control-label") + ':' }}
+                {% if form.email.errors %}
+                {{ form.email(class="form-control form-control is-invalid") }}
+                <div class="invalid-feedback">
+                  {% for error in form.email.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %}
+                {{ form.email(class="form-control form-control") }}
+                {% endif %}
+              </div>
+              <div class="form-group">
+                {{ form.password.label(class="form-control-label")+ ':' }}
+                {{ form.password(class="form-control form-control") }}
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-12 col-md-6">
+                  {{form.first_name.label(class="form-control-label")}}
+                  {% if form.first_name.errors %}
+                  {{ form.first_name(class="form-control form-control is-invalid") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                  {% else %}
+                  {{ form.first_name(class="form-control form-control") }}
+                  {% endif %}
+                </div>
+                <div class="col-sm-12 col-md-6">
+                  {{form.last_name.label(class="form-control-label")}}
+                  {% if form.last_name.errors %}
+                  {{ form.last_name(class="form-control form-control is-invalid") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                  {% else %}
+                  {{ form.last_name(class="form-control form-control") }}
+                  {% endif %}
+                </div>
+              </div>
+              <div class="form-group mt-1 ">
+                {{form.mobile_number.label(class="form-control-label")}}
+                {% if form.mobile_number.errors %}
+                {{ form.mobile_number(class="form-control form-control is-invalid") }}
+                <div class="invalid-feedback">
+                  {% for error in form.username.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %}
+                {{ form.mobile_number(class="form-control form-control") }}
+                {% endif %}
+              </div>
+              <div class="form-group mt-1 ">
+                {{ form.role.label(class="form-control-label")+ ':' }}
+                {{ form.role(class="form-select") }}
+              </div>
+              <div class="form-group mt-1 " id="specialization" style="display: none;">
+                {{ doctor_form.specialization.label(class="form-control-label")+ ':' }}
+                {{ doctor_form.specialization(class="form-select") }}
+
+              </div>
+              <div class="form-group mt-1">
+                {{ form.profile_pic.label(class="form-control-label")+ ':' }}
+                {{ form.profile_pic(class="form-control") }}
+              </div>
+            </fieldset>
+            <div class="form-group mt-3 d-flex  justify-content-center">
+              {{ form.submit(class="btn btn-primary bg-gradient") }}
+            </div>
+          </form>
+        </div>
+
+        <div class="m-2 text-center">
+          <small class="text-muted">
+            Already Have An Account? <a class="ml-2" href="{{ url_for('authentication_blueprint.login') }}">Sign In</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+{% endblock content %}

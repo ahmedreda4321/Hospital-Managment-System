@@ -1,0 +1,131 @@
+{% extends 'home/homebase.html' %}
+{%block headscript%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+  $(function () {
+    $('#navdash').addClass('active');
+    $("[name='sidebuttons']").click(function (e) {
+      $("[name='sidebuttons']").removeClass('active bg-gradient');
+      $(this).addClass('active bg-gradient');
+      $('#content_container').attr('src', $(this).attr('value'));
+    });
+
+
+  });
+
+</script>
+{%endblock%}
+{% block content %}
+<nav class="navbar navbar-expand-md navbar-dark sticky-top bg-success bg-gradient d-block d-sm-none w-100">
+  <div class="container-fluid">
+    <span class="navbar-brand fs-6">Dashboard</span>
+
+    <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse2"
+      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse " id="navbarCollapse2">
+      <ul class="nav nav-pills  flex-column mb-auto ">
+        <li class="nav-item">
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.admin_main')}}"
+            class="nav-link link-body-emphasis  active bg-gradient" aria-current="page">
+            Home
+          </a>
+        </li>
+        {% if current_user.role=='3'%}
+        <li>
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.manage_doctor')}}"
+            class="nav-link link-body-emphasis ">
+            Manage Doctors
+          </a>
+        </li>
+        <li>
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.manage_patient')}}"
+            class="nav-link link-body-emphasis">
+            Manage Patients
+          </a>
+        </li>
+        <li>
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.manage_appointments')}}" class="nav-link link-body-emphasis">
+
+            Manage Appointments
+          </a>
+        </li>
+        
+        {%endif%}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Custom style to subtract navbar height */
+  .sidenav {
+    height: calc(100vh - 56px);
+    /* Adjust 56px based on your actual navbar height */
+    overflow-y: auto;
+    /* Add scrollbar if needed */
+  }
+</style>
+<div class="container-fluid pt-2">
+  <div class="row content">
+
+    <div class="col-sm-2 sidenav d-none d-sm-block  bg-success bg-gradient  px-0 ">
+      <div class="d-flex flex-column flex-xxl-row justify-content-center align-items-center p-1 shadow"
+        style="min-height: 150px;background-color: rgba(0, 0, 0, 0.5);">
+        <div>
+          <img src="{{url_for('static',filename='/profile_pics/'+current_user.profile_pic)}}"
+            class="img-fluid rounded-circle ms-1 shadow-lg" alt="" style="height: 75px; width: 75px;" />
+        </div>
+        <div class="h2 text-center text-white ms-3 ">
+          {{current_user.first_name}} Dashboard
+        </div>
+      </div>
+
+      <ul class="nav nav-pills flex-column mb-auto ">
+        <li class="nav-item">
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.admin_main')}}"
+            class="nav-link link-body-emphasis  active bg-gradient" aria-current="page">
+            Home
+          </a>
+        </li>
+        {% if current_user.role=='3'%}
+        <li>
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.manage_doctor')}}"
+            class="nav-link link-body-emphasis ">
+            Manage Doctors
+          </a>
+        </li>
+        <li>
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.manage_patient')}}"
+            class="nav-link link-body-emphasis">
+            Manage Patients
+          </a>
+        </li>
+        <li>
+          <a href="#" name="sidebuttons" value="{{url_for('home_blueprint.manage_appointments')}}" class="nav-link link-body-emphasis">
+
+            Manage Appointments
+          </a>
+        </li>
+       
+        {%endif%}
+      </ul>
+    </div>
+
+
+    <div class="col-sm-10 p-0 sidenav overflow-hidden">
+      {% if current_user.role=='3'%}
+      <iframe width="100%" height="100%" src="{{url_for('home_blueprint.admin_main')}}" id="content_container"
+        frameborder="4" allowfullscreen></iframe>
+        {%elif current_user.role=='2'%}
+        <iframe width="100%" height="100%" src="{{url_for('home_blueprint.dr_view_appointments')}}" id="content_container"
+        frameborder="4" allowfullscreen></iframe>
+        {%elif current_user.role=='1'%}
+        <iframe width="100%" height="100%" src="{{url_for('home_blueprint.pt_view_appointments')}}" id="content_container"
+        frameborder="4" allowfullscreen></iframe>
+      {%endif%}
+    </div>
+  </div>
+</div>
+{% endblock %}

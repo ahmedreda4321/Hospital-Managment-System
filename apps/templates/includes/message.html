@@ -1,0 +1,23 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+
+<center>
+    <div class="alert alert-{{ category }} fixed-top alert-dismissible fade show rounded-pill shadow bg-gradient text-center m-3 w-50"
+        id="flash-message" name="flash-message" style="top: {{12 + loop.index *9}}%;left: 25%;">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</center>
+{% endfor %}
+<script>
+    $(function () {
+        var elements = $('[name="flash-message"]');
+        elements.each(function (index) {
+            $(this).delay((elements.length)*2000 - ( index*2000)).fadeOut();
+        });
+        
+    });
+</script>
+{% endif %}
+{% endwith %}

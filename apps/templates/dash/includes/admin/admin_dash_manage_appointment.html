@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Title</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    .dropdown-item:hover {
+      background-color: gray;
+      color: white;
+    }
+  </style>
+  <script>
+    var usertodelete
+
+    $(document).on("click", '#deletefromdb', function () {
+      $.post("{{url_for('home_blueprint.delete_appointment')}}", { 'appointmentid': usertodelete },
+        function (data, textStatus, jqXHR) {
+          if (data.success) {
+            alert('Deleted');
+            location.reload();
+          }
+          else {
+            alert("Couldn't delete due to a server error")
+          }
+        },
+      );
+
+    });
+    $(function () {
+      $("[name='activatebtn']").click(function (e) {
+        thisbutton = $(this);
+        user_id = $(this).attr('userid');
+        $.post("{{url_for('home_blueprint.toggle_appointment')}}", { 'userid': user_id },
+          function (data, textStatus, jqXHR) {
+            if (data.approve) {
+              $("[userid='" + user_id + "'][name='approveshow']").removeClass('text-bg-danger')
+              $("[userid='" + user_id + "'][name='approveshow']").addClass('text-bg-success')
+              $("[userid='" + user_id + "'][name='approveshow']").text('Approved')
+              thisbutton.text('Deactivate')
+            }
+            else {
+              $("[userid='" + user_id + "'][name='approveshow']").removeClass('text-bg-success')
+              $("[userid='" + user_id + "'][name='approveshow']").addClass('text-bg-danger')
+              $("[userid='" + user_id + "'][name='approveshow']").text('Needs Approval')
+              thisbutton.text('Activate')
+            }
+          },
+        );
+
+      });
+      $("[name=removebtn]").click(function (e) {
+        usertodelete = $(this).attr('userid')
+        $('#modalbody').text('You are about to delete ' + $("[userid='" + usertodelete + "'][name='nameofdoc']").text());
+      });
+    });
+  </script>
+</head>
+
+<body class="p-2 " style="font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h1 class="modal-title fs-5 " id="exampleModalLabel">Are you sure ?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalbody">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="deletefromdb">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <main>
+
+    <div class="row gap-0 px-2 justify-content-center">
+      <div class="col-sm-11 col-md-8 p-0 mb-2 d-flex flex-row justify-content-end">
+        <a class="btn btn-success bg-gradient" href="{{url_for('home_blueprint.add_appointment')}}" role="button">
+          <i class="fa-regular fa-calendar-plus"></i>
+        </a>
+      </div>
+      <div class="col-sm-11 col-md-8 p-0">
+        <div class="bg-success bg-gradient h3 text-center text-white mb-0 rounded-top-3"> Current appointments</div>
+        <div class=" p-0 rounded-bottom-3">
+
+          <table class="table table-primary  table-striped m-0 table-hover text-center">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Doctor Name</th>
+                <th scope="col">Patient Name</th>
+                <th scope="col">Date</th>
+                <th scope="col">Approval</th>
+                <th scope="col"> Edit </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for appointment in all_appointments %}
+              <tr class="">
+                <th scope="row">{{loop.index }}</th>
+                <td> {{appointment.doctor.first_name}} {{appointment.doctor.last_name}} </td>
+                <td>{{appointment.patient.first_name}} {{appointment.patient.last_name}}</td>
+                <td>
+                  {{appointment.date_time}}
+                </td>
+                <td>
+                  {% if appointment.is_approved %}
+                  <span class="badge text-bg-success bg-gradient" userid="{{appointment.id}}"
+                    name="approveshow">Approved</span>
+                  {% else %}
+                  <span class="badge text-bg-danger bg-gradient" userid="{{appointment.id}}" name="approveshow">Needs
+                    Approval</span>
+                  {%endif%}
+                </td>
+                <td>
+                  <div class="dropdown open">
+                    <button class="btn btn-outline-secondary border-0" type="button" id="triggerId"
+                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="triggerId">
+                      {% if not appointment.is_approved %}
+                      <button class="dropdown-item" userid="{{appointment.id}}" name="activatebtn">Activate</button>
+                      {% else %}
+                      <button class="dropdown-item" userid="{{appointment.id}}" name="activatebtn">Deactivate</button>
+                      {% endif %}
+                      <button class="dropdown-item" userid="{{appointment.id}}" name="removebtn" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">Remove</button>
+                      <a href="{{url_for('home_blueprint.update_appointment',apt_id=appointment.id)}}"
+                        class="text-decoration-none"><button class="dropdown-item" userid="{{appointment.id}}"
+                          name="editbtn">Edit</button></a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {%endfor %}
+            </tbody>
+          </table>
+        </div>
+
+
+      </div>
+
+    </div>
+  </main>
+  <footer>
+    <!-- place footer here -->
+  </footer>
+  <!-- Bootstrap JavaScript Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

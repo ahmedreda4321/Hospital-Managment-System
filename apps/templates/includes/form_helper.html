@@ -1,0 +1,43 @@
+{% macro render_form(form) %}
+<div class="form-group">
+    {% for field in form %}
+    {% if field.type in
+    ['DecimalField','FileField','MultipleFileField','IntegerField','StringField','TextAreaField',"BooleanField","TextAreaField","PasswordField",
+    "SearchField",
+    "StringField",
+    "TelField",
+    "URLField",
+    "EmailField",] %}
+    {{ field.label(class="form-label" , for=field.id ) }}
+    {{ field(class="form-control")}}
+    {%elif field.type in [ "SelectField",
+    "SelectMultipleField"] %}
+    {{ field.label(class="form-label" ,for=field.id) }}
+    {{ field(class="form-select")}}
+    {%elif field.type in ['RadioField','BooleanField'] %}
+    {% for subfield in field %}
+    {{ subfield(class=form-check-input) }}
+    {{ subfield.label(form-check-label) }}
+    {% endfor %}
+    {%elif field.type in ['FieldList','FormField'] %}
+    {{render_form(field)}}
+    {%elif field.type =="SubmitField" %}
+    <div class="d-flex justify-content-end">
+
+
+        {{ field(class="btn btn-primary mt-2")}}
+    </div>
+    {% elif field.type == 'DateTimeField' %}
+    {{ field.label(class="form-label" , for=field.id ) }}
+    {{ field(class="form-control", type="datetime-local")}}
+    {%elif field.type =="HiddenField"%}
+    {{ field }}
+    {% else %}
+    {{ field}}
+    {%endif%}
+    {% for error in field.errors %}
+    <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+    {%endfor%}
+</div>
+{% endmacro %}

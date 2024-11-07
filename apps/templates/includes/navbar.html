@@ -1,0 +1,46 @@
+<nav class="navbar navbar-dark fixed-top navbar-expand-md bg-primary bg-gradient">
+  <div class="container">
+    <a href="/" class="navbar-brand  fs-5 fw-bold d-none d-sm-block">Hospital Management</a>
+    <a href="/" class="navbar-brand fs-6   d-block d-sm-none">Hospital Management</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link " id="navhome" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/dashboard" id="navdash">Dashboard</a>
+        </li>
+        {% if current_user.is_authenticated and current_user.role=='1' %}
+        <li class="nav-item">
+          <a class="nav-link" href="/appointments" id="navmakeapt">Make an appointment</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/aboutus" id="navabout">About us</a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if current_user.is_authenticated %}
+          <li class="nav-item my-auto">
+            <div class=" text-white p-1">
+              <img src="{{url_for('static',filename='/profile_pics/'+current_user.profile_pic)}}"
+                class="img-fluid rounded-circle" alt="" style="height: 25px; width: 25px;" />
+              {{ current_user.first_name }}
+            </div>
+          </li>
+
+          <a href="/logout" id="navreg" class="nav-item nav-link">logout</a>
+          {% else %}
+          <a href="/register" id="navreg" class="nav-item nav-link">Register</a>
+          <a href="/login" id="navlog" class="nav-item nav-link">Login</a>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

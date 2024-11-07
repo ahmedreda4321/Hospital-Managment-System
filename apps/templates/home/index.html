@@ -1,0 +1,84 @@
+{% extends 'home/homebase.html' %}
+<!--
+
+-->
+{%block headscript%}
+<script>
+  $(function () {
+    $('#navhome').addClass('active');
+  });
+</script>
+<style >
+  .jumbotron {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-image: url("{{ url_for('static',filename='images/bg.jpg') }}");
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .jumbotron h5,
+  h3 {
+    text-align: center;
+  }
+
+
+  .alert {
+    margin: 0px;
+  }
+
+
+
+  .glow {
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 10px #eeeeee, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 50px #9554b3, 0 0 60px #9554b3, 0 0 70px #9554b3;
+    }
+
+    to {
+      text-shadow: 0 0 20px #eeeeee, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+    }
+  }
+</style>
+{%endblock headscript%}
+
+{% block content %}
+
+
+
+<div class="jumbotron">
+  <br>
+  <h5 class="display-3 glow">Hospitals are about healing!</h5>
+  <br><br><br><br><br>
+  <p>
+  
+
+  {% if current_user.is_authenticated and (current_user.role=='2' or current_user.role=='3') %}
+  <div class="d-flex justify-content-center">
+    <a class="btn btn-primary btn-lg" href="/dash" role="button">Check Dashboard</a>
+  </div>
+  {% else %}
+  <h3>Emergency ?</h3>
+  <div class="d-flex justify-content-center">
+    <a class="btn btn-primary btn-lg" href="/patientclick" role="button">Take Appointment</a>
+  </div>
+  {% endif %}
+  <br><br>
+</div>
+
+<br><br><br><br>
+
+<br><br><br>
+<!--
+developed By : AI Team
+-->
+
+{% endblock content %}
